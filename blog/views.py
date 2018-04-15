@@ -2,5 +2,5 @@ from django.shortcuts import render
 
 # Create your views here.
 
-def post_list(request, pk):
+# def post_list(request, pk):
 	
