@@ -37,9 +37,9 @@ def snippet_list(request):
 
 @csrf_exempt
 def snippet_detail(request, pk):  
-    """
-    코드 조각 조회, 업데이트, 삭제
-    """
+	"""
+	코드 조각 조회, 업데이트, 삭제
+	"""
 	try:
 		snippet = Snippet.objects.get(pk=pk)
 	except Snippet.DoesNotExist:
