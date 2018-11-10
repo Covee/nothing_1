@@ -2,6 +2,15 @@ from django.forms import widgets
 from rest_framework import serializers
 from .models import Snippet, LANGUAGE_CHOICES, STYLE_CHOICES
 
+from django.contrib.auth.models import User
+
+
+class UserSerializer(serializers.ModelSerializer):  
+	snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())
+
+	class Meta:
+		model = User
+		fields = ('id', 'username', 'snippets')
  
 ''' ModelSerializer를 안쓰면 이렇게 길게 직접 설정해주면 된다. '''
 
