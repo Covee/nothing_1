@@ -34,6 +34,20 @@ class UserDetail(generics.RetrieveAPIView):
 	serializer_class = UserSerializer
 
 
+
+from rest_framework.decorators import api_view  
+from rest_framework.response import Response  
+from rest_framework.reverse import reverse
+
+
+@api_view(('GET',))
+def api_root(request, format=None):  
+	return Response({
+		'users': reverse('user-list', request=request, format=format),
+		'snippets': reverse('snippet-list', request=request, format=format)
+	})
+
+
 ### Mixins: REST Framework에서 만들어둔 보편적인 기능들(CRUD같은). CBV일때 손쉽게 가져와서 쓸 수 있음.
 
 # from snippets.models import Snippet  
