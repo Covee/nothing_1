@@ -48,6 +48,22 @@ def api_root(request, format=None):
 	})
 
 
+from rest_framework import renderers  
+
+
+class SnippetHighlight(generics.GenericAPIView):  
+	queryset = Snippet.objects.all()
+	renderer_classes = (renderers.StaticHTMLRenderer,)
+
+	def get(self, request, *args, **kwargs):
+		snippet = self.get_object()
+		return Response(snippet.highlighted)
+
+
+
+
+
+
 ### Mixins: REST Framework에서 만들어둔 보편적인 기능들(CRUD같은). CBV일때 손쉽게 가져와서 쓸 수 있음.
 
 # from snippets.models import Snippet  
