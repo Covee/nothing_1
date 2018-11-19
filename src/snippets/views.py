@@ -5,34 +5,18 @@ from snippets.serializers import SnippetSerializer
 from rest_framework import generics, permissions
 from snippets.permissions import IsOwnerOrReadOnly
 
-
-class SnippetList(generics.ListCreateAPIView):  
-	queryset = Snippet.objects.all()
-	serializer_class = SnippetSerializer
-	permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-	def perform_create(self, serializer):  
-		serializer.save(owner=self.request.user)
-
-
-class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):  
-	queryset = Snippet.objects.all()
-	serializer_class = SnippetSerializer
-	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
-
-
 from django.contrib.auth.models import User
 from snippets.serializers import UserSerializer
 
-class UserList(generics.ListAPIView):  
+from rest_framework import viewsets
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):  
+	"""
+	이 뷰셋은 `list`와 `detail` 기능을 자동으로 지원합니다
+	"""
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
-
-
-class UserDetail(generics.RetrieveAPIView):  
-	queryset = User.objects.all()
-	serializer_class = UserSerializer
-
 
 
 from rest_framework.decorators import api_view  
@@ -49,16 +33,26 @@ def api_root(request, format=None):
 
 
 from rest_framework import renderers  
+from rest_framework.decorators import detail_route
 
 
-class SnippetHighlight(generics.GenericAPIView):  
+class SnippetViewSet(viewsets.ModelViewSet):  
+	"""
+	이 뷰셋은 `list`와 `create`, `retrieve`, `update`, 'destroy` 기능을 자동으로 지원합니다
+
+	여기에 `highlight` 기능의 코드만 추가로 작성했습니다
+	"""
 	queryset = Snippet.objects.all()
-	renderer_classes = (renderers.StaticHTMLRenderer,)
+	serializer_class = SnippetSerializer
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
 
-	def get(self, request, *args, **kwargs):
+	@detail_route(renderer_classes=[renderers.StaticHTMLRenderer])
+	def highlight(self, request, *args, **kwargs):
 		snippet = self.get_object()
 		return Response(snippet.highlighted)
 
+	def perform_create(self, serializer):
+		serializer.save(owner=self.request.user)
 
 
 
